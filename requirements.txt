@@ -1,0 +1,13 @@
+streamlit
+pandas
+numpy
+plotly
+langchain
+langchain-google-genai
+langchain_community
+python-dotenv
+openpyxl
+sqlalchemy
+python-multipart
+fastapi
+uvicorn

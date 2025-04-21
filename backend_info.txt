@@ -1,0 +1,10 @@
+- CORS middleware is enabled to allow frontend applications to access the API
+- The server maintains the current DataFrame in memory (in production, you should use a proper database)
+- All endpoints include proper error handling
+- The /generate-response endpoint uses Server-Sent Events (SSE) for streaming responses
+- The visualization endpoint returns Plotly plots as JSON that can be rendered on the frontend
+- To test the API, you can use the following sequence:
+- Upload a dataset using the /upload-data endpoint
+- Generate a summary using /generate-summary
+- Get visualizations using /visualize-data
+- Ask questions about the data using /generate-response
