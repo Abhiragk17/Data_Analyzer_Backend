@@ -45,14 +45,30 @@ async def root():
 
 @app.post("/upload-data")
 async def upload_data(file: UploadFile = File(...)):
-    """Upload and process the Excel file"""
+    """Upload and process the data file (CSV or Excel)"""
     global current_df, current_summary
     try:
         contents = await file.read()
-        current_df = pd.read_excel(io.BytesIO(contents))
+        
+        # Get file extension from filename
+        _, file_extension = os.path.splitext(file.filename)
+        file_extension = file_extension.lower()
+
+        if file_extension == '.csv':
+            current_df = pd.read_csv(io.BytesIO(contents))
+        elif file_extension in ['.xls', '.xlsx']:
+            current_df = pd.read_excel(io.BytesIO(contents))
+        else:
+            raise HTTPException(
+                status_code=400, 
+                detail=f"Unsupported file type: {file_extension}. Please upload a CSV or Excel file."
+            )
+
         current_summary = None  # Reset summary when new data is uploaded
         return {"message": "Data uploaded successfully"}
     except Exception as e:
+        if isinstance(e, HTTPException):
+            raise
         raise HTTPException(status_code=400, detail=str(e))
 
 @app.get("/generate-summary")

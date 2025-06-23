@@ -1,10 +1,12 @@
 # chatbot.py
-from langchain.agents import create_sql_agent
+from langchain_community.agent_toolkits.sql.base import create_sql_agent
+from langchain_community.utilities import SQLDatabase
 from langchain_community.agent_toolkits.sql.toolkit import SQLDatabaseToolkit
-from langchain.utilities import SQLDatabase
 from langchain_google_genai import ChatGoogleGenerativeAI
+from langchain_deepseek import ChatDeepSeek
+from langchain_groq import ChatGroq
 from langchain.agents.agent_types import AgentType
-from langchain.agents.agent_toolkits.sql.prompt import SQL_PREFIX, SQL_SUFFIX
+from langchain_community.agent_toolkits.sql.prompt import SQL_PREFIX, SQL_SUFFIX
 import pandas as pd
 from sqlalchemy import create_engine
 import sqlite3
@@ -14,9 +16,19 @@ from pathlib import Path
 
 class DataChatbot:
     def __init__(self):
-        self.llm = ChatGoogleGenerativeAI(
-            model="gemini-1.5-pro",
-            google_api_key=os.environ["GOOGLE_API_KEY"]
+        #self.llm = ChatGoogleGenerativeAI(
+        #    model="gemini-1.5-pro",
+        #    google_api_key=os.environ["GOOGLE_API_KEY"]
+        #)
+        self.llm = ChatGroq(
+            model="llama-3.1-8b-instant",
+            #model="llama-3.1-405b-reasoning",
+            temperature=0,
+            max_tokens=None,
+            timeout=None,
+            max_retries=2,
+            api_key=os.environ["GROQ_API_KEY"]
+            # other params...
         )
         self.db = None
         self.agent = None
@@ -50,7 +62,7 @@ class DataChatbot:
             You are an expert data analyst with access to a SQL database.
 Your job is to help users understand their data through insightful analysis and clear communication.
 
-Stay friendly and professional. If someone greets you or says something casual (like "hi", "hello", "thanks"), respond politely and briefly before continuing with the task. 
+If someone greets you or says something casual (like "hi", "hello", "thanks"), respond politely and briefly before continuing with the task and stop. 
 If the query isnt related to data or SQL analysis, gently guide them back to asking about data insights.
 
 Always reason step-by-step when needed and make sure your responses are understandable by non-technical users.
@@ -59,11 +71,10 @@ Always reason step-by-step when needed and make sure your responses are understa
             custom_suffix = """
 When responding:
 1. Provide detailed, helpful answers based on the data.
-2. Use SQL queries where appropriate to support your analysis.
-3. Clearly explain your reasoning and results in plain language.
-4. If clarification is needed, ask for it rather than guessing.
+2. Clearly explain your reasoning and results in plain language.
+3. If clarification is needed, ask for it rather than guessing.
 
-Stay helpful, polite, and focused on data.
+Focus on data.
             """ + SQL_SUFFIX
             
             print('Creating SQL agent...')
@@ -74,7 +85,8 @@ Stay helpful, polite, and focused on data.
                 verbose=True,
                 prefix=custom_prefix,
                 suffix=custom_suffix,
-                handle_parsing_errors=True
+                handle_parsing_errors=True,
+                max_iterations=5
             )
             print(f'SQL agent created')
         except Exception as e:
@@ -90,6 +102,7 @@ Stay helpful, polite, and focused on data.
         try:
             print(f"Processing query: {query}")
             response = self.agent.invoke({"input": query})
+            print(f"Response: {response}")
             return response['output']
         except Exception as e:
             print(f"Error in chat: {str(e)}")

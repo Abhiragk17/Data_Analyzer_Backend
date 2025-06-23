@@ -4,6 +4,8 @@ numpy
 plotly
 langchain
 langchain-google-genai
+langchain-deepseek
+langchain-groq
 langchain_community
 python-dotenv
 openpyxl
