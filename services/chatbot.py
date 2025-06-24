@@ -81,7 +81,6 @@ Focus on data.
             self.agent = create_sql_agent(
                 llm=self.llm,
                 toolkit=toolkit,
-                agent_type=AgentType.ZERO_SHOT_REACT_DESCRIPTION,
                 verbose=True,
                 prefix=custom_prefix,
                 suffix=custom_suffix,

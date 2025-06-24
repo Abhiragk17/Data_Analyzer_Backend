@@ -69,3 +69,5 @@ htmlcov/
 # System Files
 .DS_Store
 Thumbs.db 
+
+crewai_chatbot.py

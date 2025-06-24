@@ -31,7 +31,7 @@ def test_deepseek_api(api_key):
 
 if __name__ == "__main__":
     # Get API key from environment variable
-    api_key = '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'
+    api_key = ''
     print(api_key) 
     
     if not api_key:

@@ -45,7 +45,7 @@ async def root():
 
 @app.post("/upload-data")
 async def upload_data(file: UploadFile = File(...)):
-    """Upload and process the data file (CSV or Excel)"""
+    """Upload and process the Excel file"""
     global current_df, current_summary
     try:
         contents = await file.read()
