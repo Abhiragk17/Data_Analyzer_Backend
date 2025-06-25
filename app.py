@@ -20,6 +20,7 @@ app = FastAPI(title="Data Analyzer API")
 origins = [
     "http://localhost:3000",
     "http://localhost:8000",
+    "https://datanalyzer.netlify.app"
 ]
 # Add CORS middleware
 app.add_middleware(
